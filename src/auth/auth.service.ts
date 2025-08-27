@@ -5,6 +5,7 @@ import { AuthResponse } from './types/auth-response.type';
 import { UsersService } from 'src/users/users.service';
 import { LoginInput } from './dto/inputs';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 
 @Injectable()
@@ -12,7 +13,12 @@ export class AuthService {
 
     constructor(
         private readonly usersService: UsersService,
+        private readonly jwtService: JwtService,
     ){}
+
+    private getJwtToken(userId:string){
+        return this.jwtService.sign({id:userId});
+    }
 
     async signup(signupInput:SignupInput):Promise<AuthResponse>{
       
@@ -20,7 +26,7 @@ export class AuthService {
         const user = await this.usersService.create(signupInput);
 
         //token
-        const token = 'abc123';
+        const token = this.getJwtToken(user.id);
 
         return {
             user,
@@ -38,7 +44,7 @@ export class AuthService {
         }
       
         //validar usuario
-        const token = 'abcd1234'
+        const token = this.getJwtToken(user.id);
         //token
         return {
             user,
