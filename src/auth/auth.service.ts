@@ -1,4 +1,4 @@
-import { BadGatewayException, Injectable } from '@nestjs/common';
+import { BadGatewayException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { SignupInput } from './dto/inputs/signup.input';
 import { User } from 'src/users/entities/user.entity';
 import { AuthResponse } from './types/auth-response.type';
@@ -50,5 +50,16 @@ export class AuthService {
             user,
             token
         };
+    }
+
+    async validateUser(id: string): Promise<Omit<User, 'password'>> {
+        const user = await this.usersService.findOneById(id);
+        if(user.isBlocked) 
+            throw new UnauthorizedException('User is blocked, talk with an admin');
+       
+        const {password, ...userReset} = user;
+        return userReset;
+        // return user;
+
     }
 }
