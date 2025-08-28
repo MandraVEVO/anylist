@@ -32,7 +32,7 @@ export class AuthResolver {
     revalidateToken(
       @CurrentUser() user: User
     ):AuthResponse{
-      throw new Error('no implementado');
+      return this.authService.revalidateToken(user);
     }
 
   }
