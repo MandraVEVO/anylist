@@ -5,7 +5,7 @@ import { User } from "src/users/entities/user.entity";
 export class AuthResponse {
 
 
-    @Field(() => String)
+  @Field(() => String)
   token: string;
 
   @Field(() => User)
