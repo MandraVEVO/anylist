@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { throwDeprecation } from 'process';
+import { ValidRoles } from 'src/auth/enums/valid-roles.enum';
 
 @Injectable()
 
@@ -34,8 +35,14 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<User[]> {
-    return [];
+  async findAll(roles:ValidRoles[]): Promise<User[]> {
+    if( roles.length === 0 )return this.userRepository.find();
+  
+    /// TENEMOS ROLES
+    return this.userRepository.createQueryBuilder()
+      .andWhere('ARRAY[roles] && ARRAY[:...roles]')
+      .setParameter('roles', roles)
+      .getMany();
   }
 
   async findOneByEmail(email: string): Promise<User> {

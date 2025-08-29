@@ -23,7 +23,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
 
-        console.log(configService.get('JWT_SECRET'));
+        // console.log(configService.get('JWT_SECRET'));
 
         return{
           secret: configService.get('JWT_SECRET'),
