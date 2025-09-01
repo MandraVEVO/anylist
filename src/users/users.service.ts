@@ -36,7 +36,12 @@ export class UsersService {
   }
 
   async findAll(roles:ValidRoles[]): Promise<User[]> {
-    if( roles.length === 0 )return this.userRepository.find();
+    if( roles.length === 0 )return this.userRepository.find({
+      //TODO: No es necesario porque tenemos lazy, la propiedad lastUpdatedBy se carga automáticamente
+      // relations:{
+      //   lastUpdatedBy: true
+      // }
+    });
   
     /// TENEMOS ROLES
     return this.userRepository.createQueryBuilder()
@@ -70,8 +75,12 @@ export class UsersService {
     return `This action updates a #${id} user`;
   }
 
-  block(id: string): Promise<User> {
-    throw new Error(`Method not implemented. ID: ${id}`);
+  async block(id: string, adminUser: User): Promise<User> {
+  const userToBlock =await this.findOneById(id);
+  userToBlock.isBlocked = true;
+  userToBlock.lastUpdatedBy = adminUser;
+  return await this.userRepository.save(userToBlock);
+
   }
 
   private handleDBErrors(error: any ): never{
