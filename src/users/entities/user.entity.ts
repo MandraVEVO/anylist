@@ -11,7 +11,6 @@ export class User {
   @Field(() => String)
   @Column()
   fullname: string
-
   @Field(() => String)
   @Column({ unique: true })
   email: string

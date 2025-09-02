@@ -63,11 +63,11 @@ input UpdateItemInput {
 
 input UpdateUserInput {
   email: String
-  fullName: String
+  fullname: String
   password: String
   id: ID!
   roles: [ValidRoles!]
-  isActive: Boolean
+  isBlocked: Boolean
 }
 
 input SignupInput {

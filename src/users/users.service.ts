@@ -79,18 +79,22 @@ export class UsersService {
     updateBy: User
   ): Promise<User> {
 
-    try {
-      const user = await this.userRepository.preload({
-        ...updateUserInput,
-        id
-      });
-
-      user.lastUpdatedBy = updateBy;
-
-      return await this.userRepository.save( user );
-
-    } catch (error) {
-      this.handleDBErrors( error );
+        try {
+    	const user = await this.userRepository.preload( {
+    		...updateUserInput,
+    		id
+    	} );
+     
+    	if ( !user ) {
+    		throw new NotFoundException( `User with id ${ id } not found` );
+    	}
+     
+    	user.lastUpdatedBy = updateBy;
+     
+    	return await this.userRepository.save( user );
+     
+    } catch ( error ) {
+    	this.handleDBErrors( error );
     }
   }
 
