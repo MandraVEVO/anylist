@@ -8,6 +8,8 @@ import { Not, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { throwDeprecation } from 'process';
 import { ValidRoles } from 'src/auth/enums/valid-roles.enum';
+import { Args, Mutation } from '@nestjs/graphql';
+import { error } from 'console';
 
 @Injectable()
 
@@ -71,8 +73,25 @@ export class UsersService {
     }
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
+  async update(
+    id: string, 
+    updateUserInput: UpdateUserInput,
+    updateBy: User
+  ): Promise<User> {
+
+    try {
+      const user = await this.userRepository.preload({
+        ...updateUserInput,
+        id
+      });
+
+      user.lastUpdatedBy = updateBy;
+
+      return await this.userRepository.save( user );
+
+    } catch (error) {
+      this.handleDBErrors( error );
+    }
   }
 
   async block(id: string, adminUser: User): Promise<User> {
