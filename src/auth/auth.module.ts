@@ -10,7 +10,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   providers: [AuthResolver, AuthService, JwtStrategy],
-  exports:[JwtStrategy],
+  exports: [JwtStrategy, JwtModule], // Agrega JwtModule aquí
   imports: [
     UsersModule,
 
