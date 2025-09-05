@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
+import { ApolloServerPluginLandingPageProductionDefault } from 'apollo-server-core';
 
 
 @Module({
@@ -24,15 +25,17 @@ import { JwtService } from '@nestjs/jwt';
         playground: false,
         autoSchemaFile: join( process.cwd(), 'src/schema.gql'), 
         plugins: [
-          ApolloServerPluginLandingPageLocalDefault
+          process.env.NODE_ENV === 'development'
+          ? ApolloServerPluginLandingPageProductionDefault()
+          : ApolloServerPluginLandingPageLocalDefault(),
         ],
         context({ req }) {
           // const token = req.headers.authorization?.replace('Bearer ','');
-          // if ( !token ) throw Error('Token needed');
+          // // if ( !token ) throw Error('Token needed');
 
           // const payload = jwtService.decode( token );
-          // if ( !payload ) throw Error('Token not valid');
-          
+          // // if ( !payload ) throw Error('Token not valid');
+          // console.log({ payload });
         }
       })
     }),

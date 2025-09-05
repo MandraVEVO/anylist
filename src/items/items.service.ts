@@ -3,6 +3,7 @@ import { CreateItemInput, UpdateItemInput } from './dto/inputs/index';
 import { Item } from './entities/item.entity';
 import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../users/entities/user.entity';
 
 
 @Injectable()
@@ -13,8 +14,9 @@ export class ItemsService {
     private readonly itemsRepository: Repository<Item>,
   ) {}
 
-  async create(createItemInput: CreateItemInput): Promise<Item> {
-    const newItem = this.itemsRepository.create(createItemInput);
+  async create(createItemInput: CreateItemInput, user:User): Promise<Item> {
+
+    const newItem = this.itemsRepository.create({...createItemInput, user});
     return await this.itemsRepository.save(newItem);
   }
 
