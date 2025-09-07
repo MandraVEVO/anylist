@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
 import { ApolloServerPluginLandingPageProductionDefault } from 'apollo-server-core';
+import { SeedModule } from './seed/seed.module';
 
 
 @Module({
@@ -61,6 +62,7 @@ import { ApolloServerPluginLandingPageProductionDefault } from 'apollo-server-co
            ItemsModule,
            UsersModule,
            AuthModule,
+           SeedModule,
      ],
   controllers: [],
   providers: [],
