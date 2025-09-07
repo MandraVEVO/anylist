@@ -27,7 +27,7 @@ export class Item {
   //stores
   //user
 
-  @ManyToOne(()=> User, (user)=> user.items,{nullable: false})
+  @ManyToOne(()=> User, (user)=> user.items,{nullable: false, lazy: true})
   @Index('index')
   @Field(() => User)
   user: User;

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateItemInput, UpdateItemInput } from './dto/inputs/index';
 import { Item } from './entities/item.entity';
 import { In, Repository } from 'typeorm';
@@ -31,26 +31,44 @@ export class ItemsService {
     });
   }
 
-  async findOne(id: string): Promise<Item> {
-    const item = await this.itemsRepository.findOne({ where: { id } });
-    if (!item) {
-      throw new Error(`Item with id ${id} not found`);
-    }
+ async findOne( id: string, user: User ): Promise<Item> {
+
+    const item = await this.itemsRepository.findOneBy({ 
+      id,
+      user: {
+        id: user.id
+      }
+    });
+
+    if ( !item ) throw new NotFoundException(`Item with id: ${ id } not found`);
+    // item.user = user;
     return item;
   }
 
-  async update(id: string, updateItemInput: UpdateItemInput): Promise<Item> {
-    const item = await this.itemsRepository.preload(updateItemInput)
+  async update(id: string, updateItemInput: UpdateItemInput, user: User): Promise<Item> {
+    await this.findOne(id,user);
+    const item = await this.itemsRepository.preload(updateItemInput )
     if (!item) {
       throw new Error(`Item with id ${id} not found`);
     }
     return await this.itemsRepository.save(item);
   }
 
-  async remove(id: string): Promise<Item> {
+  async remove(id: string,user:User): Promise<Item> {
     //TODO: soft delete, integridad referencia
-    const item = await this.findOne(id);
+    const item = await this.findOne(id,user);
     await this.itemsRepository.remove(item);
     return {...item,id}
+  }
+
+
+  async itemCountByUser(user: User): Promise<number>{
+    return this.itemsRepository.count(
+      {where:{
+        user:{
+          id:user.id
+        }
+      }}
+    );
   }
 }

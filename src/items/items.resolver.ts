@@ -29,22 +29,26 @@ export class ItemsResolver {
   }
 
   @Query(() => Item, { name: 'item' })
-  findOne(
-    @Args('id', { type: () => ID }, ParseUUIDPipe) id: string):
-   Promise<Item> {
-    return this.itemsService.findOne(id);
+  async findOne(
+    @Args('id', { type: () => ID }, ParseUUIDPipe ) id: string,
+    @CurrentUser() user: User
+  ): Promise<Item> {
+    return this.itemsService.findOne(id, user );
   }
 
   @Mutation(() => Item)
   updateItem(
-    @Args('updateItemInput') updateItemInput: UpdateItemInput) {
-    return this.itemsService.update(updateItemInput.id, updateItemInput);
+    @Args('updateItemInput') updateItemInput: UpdateItemInput,
+    @CurrentUser() user: User
+  ): Promise<Item> {
+    return this.itemsService.update(updateItemInput.id, updateItemInput, user);
   }
 
   @Mutation(() => Item)
   removeItem(
-    @Args('id', { type: () => ID }, ParseUUIDPipe) id: string):
-    Promise<Item> {
-    return this.itemsService.remove(id);
+    @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+    @CurrentUser() user: User
+  ): Promise<Item> {
+    return this.itemsService.remove(id,user);
   }
 }

@@ -10,6 +10,7 @@ type User {
   isBlocked: Boolean!
   lastUpdatedBy: User
   items: [Item!]!
+  itemCount: Int!
 }
 
 type Item {
