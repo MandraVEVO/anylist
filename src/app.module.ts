@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
 import { ApolloServerPluginLandingPageProductionDefault } from 'apollo-server-core';
 import { SeedModule } from './seed/seed.module';
+import { CommonModule } from './common/common.module';
 
 
 @Module({
@@ -63,6 +64,7 @@ import { SeedModule } from './seed/seed.module';
            UsersModule,
            AuthModule,
            SeedModule,
+           CommonModule,
      ],
   controllers: [],
   providers: [],
