@@ -22,14 +22,16 @@ export class UsersResolver {
   ) {}
 
   @Query(() => [User], { name: 'users' })
-  findAll(
+  async findAll(
     @Args() validRoles: ValidRolesArgs,
+    @Args() paginationArgs: PaginationArgs,
+    @Args() searchArgs: SearchArgs,
    // @CurrentUser([ValidRoles.admin]) user: User //para hacer que solo lo ejecute los admin
    
   ): Promise<User[]> {
     //console.log({ user });
     // console.log({ validRoles });
-    return this.usersService.findAll(validRoles.roles);
+    return this.usersService.findAll(validRoles.roles, paginationArgs, searchArgs);
   }
 
   @Query(() => User, { name: 'user' })

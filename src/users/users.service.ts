@@ -10,6 +10,7 @@ import { throwDeprecation } from 'process';
 import { ValidRoles } from 'src/auth/enums/valid-roles.enum';
 import { Args, Mutation } from '@nestjs/graphql';
 import { error } from 'console';
+import { PaginationArgs, SearchArgs } from 'src/common/dto/args';
 
 @Injectable()
 
@@ -37,18 +38,27 @@ export class UsersService {
     }
   }
 
-  async findAll(roles:ValidRoles[]): Promise<User[]> {
-    if( roles.length === 0 )return this.userRepository.find({
-      //TODO: No es necesario porque tenemos lazy, la propiedad lastUpdatedBy se carga automáticamente
-      // relations:{
-      //   lastUpdatedBy: true
-      // }
-    });
+  async findAll(roles:ValidRoles[],paginationArgs: PaginationArgs, searchArgs: SearchArgs): Promise<User[]> {
+    
+    const {limit, offset} = paginationArgs;
+    const {search} = searchArgs;
+    const searchTerm = (search ?? '').toLowerCase();
+    
+    if( roles.length === 0 ) {
+      return this.userRepository.createQueryBuilder()
+        .take(limit)
+        .skip(offset)
+        .where('LOWER(fullname) like :name OR LOWER(email) like :name', {name: `%${searchTerm}%`})
+        .getMany();
+    }
   
     /// TENEMOS ROLES
     return this.userRepository.createQueryBuilder()
       .andWhere('ARRAY[roles] && ARRAY[:...roles]')
       .setParameter('roles', roles)
+      .take(limit)
+      .skip(offset)
+      .where('LOWER(fullname) like :name OR LOWER(email) like :name', {name: `%${searchTerm}%`})
       .getMany();
   }
 
