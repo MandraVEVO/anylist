@@ -47,8 +47,12 @@ export class ListItemService {
     return this.listItemRepository.count({where: {list: {id: list.id}}});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} listItem`;
+  async findOne(id: string): Promise<ListItem> {
+    const listItem = await this.listItemRepository.findOne({ where: { id } });
+    if (!listItem) {
+      throw new Error(`ListItem with id ${id} not found`);
+    }
+    return listItem;
   }
 
   update(id: number, updateListItemInput: UpdateListItemInput) {
