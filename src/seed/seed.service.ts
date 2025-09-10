@@ -6,9 +6,11 @@ import { ItemsService } from 'src/items/items.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
-import { SEED_ITEMS, SEED_USERS } from './data/seed-data';
+import { SEED_ITEMS, SEED_USERS, SEED_LISTS } from './data/seed-data';
 import { List } from 'src/lists/entities/list.entity';
 import { ListItem } from 'src/list-item/entities/list-item.entity';
+import { ListItemService } from 'src/list-item/list-item.service';
+import { ListsService } from 'src/lists/lists.service';
 
 @Injectable()
 export class SeedService {
@@ -24,14 +26,17 @@ export class SeedService {
 
         @InjectRepository(User)
         private readonly usersRepository: Repository<User>,
+        
 
         private readonly usersService: UsersService,
 
         @InjectRepository(ListItem)
         private readonly listItemRepository: Repository<ListItem>,
-        
+        private readonly listsItemService: ListItemService,
+
         @InjectRepository(List)
         private readonly listRepository: Repository<List>,
+        private readonly listsService: ListsService,
 
 
     ) {
@@ -54,6 +59,11 @@ export class SeedService {
         // Crear items
         await this.loadItems( user );
 
+       const list = await this.loadLists( user );
+
+        // Crear listItems
+        const items = await this.itemsService.findAll(user, { limit: 15, offset: 0 }, {});
+        await this.loadListItems( list, items )
 
         return true;
     }
@@ -107,6 +117,31 @@ export class SeedService {
         }
 
         await Promise.all(items);
+
+    }
+
+      async loadLists( user: User ): Promise<List> {
+
+        const lists: List[] = [];
+
+        for (const listInput of SEED_LISTS ) {
+            lists.push( await this.listsService.create( listInput, user ) )
+        }
+
+        return lists[0];
+
+    }
+
+    async loadListItems( list: List, items: Item[] ) {
+
+        for (const item of items ) {
+            await this.listsItemService.create({
+                quantity: Math.round( Math.random() * 10 ),
+                completed: Math.round( Math.random() * 1 ) === 0 ? false : true,
+                listId: list.id,
+                itemId: item.id
+            });
+        }
 
     }
 

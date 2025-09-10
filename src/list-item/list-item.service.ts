@@ -16,7 +16,7 @@ export class ListItemService {
     private readonly listItemRepository: Repository<ListItem>,
   ) {}
 
-  create(createListItemInput: CreateListItemInput) {
+  async create(createListItemInput: CreateListItemInput) {
 
     const {itemId, listId, ...rest} =createListItemInput
     const newListItem = this.listItemRepository.create({
@@ -25,7 +25,9 @@ export class ListItemService {
       list: {id: listId}
     });
 
-    return this.listItemRepository.save(newListItem);
+    await this.listItemRepository.save(newListItem);
+
+    return this.findOne(newListItem.id); ///regresa las relaciones 
 
   }
 
