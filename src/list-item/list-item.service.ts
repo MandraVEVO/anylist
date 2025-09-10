@@ -26,8 +26,8 @@ export class ListItemService {
 
   }
 
-  findAll() {
-    return `This action returns all listItem`;
+  async findAll(): Promise<ListItem[]> {
+    return this.listItemRepository.find();
   }
 
   findOne(id: number) {

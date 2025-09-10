@@ -20,6 +20,7 @@ type List {
   name: String!
   user: User!
   listItem: [ListItem!]!
+  items: [ListItem!]!
 }
 
 type ListItem {
@@ -72,8 +73,8 @@ type Mutation {
   createList(createListInput: CreateListInput!): List!
   updateList(updateListInput: UpdateListInput!): List!
   removeList(id: ID!): List!
-  executeSeed: Boolean!
   createListItem(createListItemInput: CreateListItemInput!): ListItem!
+  executeSeed: Boolean!
 }
 
 input SignupInput {

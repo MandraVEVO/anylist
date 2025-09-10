@@ -11,6 +11,6 @@ import { ListItem } from './entities/list-item.entity';
   ],
   exports: [ListItemService,
     TypeOrmModule
-  ]
+  ],
 })
 export class ListItemModule {}
