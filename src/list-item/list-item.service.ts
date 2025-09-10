@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateListItemInput } from './dto/create-list-item.input';
 import { UpdateListItemInput } from './dto/update-list-item.input';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +6,7 @@ import { ListItem } from './entities/list-item.entity';
 import { Repository } from 'typeorm';
 import { List } from 'src/lists/entities/list.entity';
 import { PaginationArgs, SearchArgs } from 'src/common/dto/args';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class ListItemService {
@@ -55,8 +56,17 @@ export class ListItemService {
     return listItem;
   }
 
-  update(id: number, updateListItemInput: UpdateListItemInput) {
-    return `This action updates a #${id} listItem`;
+  async update(id: string, updateListItemInput: UpdateListItemInput): Promise<ListItem> {
+    const {listId,itemId,...rest} = updateListItemInput;
+    const listItem = await this.listItemRepository.preload({
+      ...rest,
+      list: {id: listId},
+      item: {id: itemId}
+    }) 
+    
+    if (!listItem) throw new NotFoundException(`ListItem with id ${id} not found`);
+
+    return this.listItemRepository.save(listItem);  
   }
 
   remove(id: number) {
