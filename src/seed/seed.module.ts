@@ -7,6 +7,9 @@ import { ItemsModule } from 'src/items/items.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Item } from 'src/items/entities/item.entity';
+import { List } from 'src/lists/entities/list.entity';
+import { ListsModule } from 'src/lists/lists.module';
+import { ListItemModule } from 'src/list-item/list-item.module';
 
 @Module({
   providers: [SeedResolver, SeedService],
@@ -14,7 +17,10 @@ import { Item } from 'src/items/entities/item.entity';
     TypeOrmModule.forFeature([Item, User]),
     ConfigModule,
     ItemsModule,
-    UsersModule
+    UsersModule,
+    ListsModule,
+    ListItemModule
+
 
   ],
 })
